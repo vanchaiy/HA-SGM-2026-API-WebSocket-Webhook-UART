@@ -5,12 +5,12 @@
 // ============================================================
 
 // ==================== CONFIG ====================
-define('WEBHOOK_TOKEN',  'YOUR_WEBHOOK_TOKEN_HERE');   // token จาก ESP32 /api/token
+define('WEBHOOK_TOKEN',  'YOUR_WEBHOOK_TOKEN_HERE');   // token จาก SGM /api/token
 define('LINE_TOKEN',     'YOUR_LINE_CHANNEL_ACCESS_TOKEN');
 define('LINE_SECRET',    'YOUR_LINE_CHANNEL_SECRET');
 define('LINE_GROUP_ID',  'YOUR_LINE_GROUP_ID');
 define('NOTIFY_ON_ONLY', true);     // true = แจ้งเฉพาะตอน ON
-define('ESP32_API_URL',  'https://your-ngrok-or-ddns-url.example.com');
+define('SGM_API_URL',    'https://your-ngrok-or-ddns-url.example.com');
 // ================================================
 
 header('Content-Type: application/json');
@@ -27,7 +27,7 @@ $data = json_decode($raw, true);
 if (isset($data['events'])) {
     handleLineEvents($data['events'], $raw);
 } else {
-    handleEsp32Webhook($data);
+    handleSgmWebhook($data);
 }
 
 // ============================================================
@@ -64,7 +64,7 @@ function handleLineEvents(array $events, string $rawBody): void {
             $name = lineGetGroupMemberName($groupId, $userId);
             $now  = (new DateTime('now', new DateTimeZone('Asia/Bangkok')))->format('d/m/Y H:i:s');
             lineReply($replyToken, "🔓 สั่งเปิดประตู\n👤 โดย: {$name}\n🕐 เวลา: {$now}");
-            esp32Press('open');
+            sgmPress('open');
         }
     }
 
@@ -72,9 +72,9 @@ function handleLineEvents(array $events, string $rawBody): void {
 }
 
 // ============================================================
-//  ESP32 Sensor Webhook
+//  SGM Sensor Webhook
 // ============================================================
-function handleEsp32Webhook(?array $data): void {
+function handleSgmWebhook(?array $data): void {
     if (WEBHOOK_TOKEN !== '') {
         $incoming = $_SERVER['HTTP_X_WEBHOOK_TOKEN'] ?? '';
         if ($incoming !== WEBHOOK_TOKEN) {
@@ -154,8 +154,8 @@ function lineGetGroupMemberName(string $groupId, string $userId): string {
     return json_decode($res, true)['displayName'] ?? 'ไม่ทราบชื่อ';
 }
 
-function esp32Press(string $button): bool {
-    $ch = curl_init(ESP32_API_URL . '/api/press?button=' . urlencode($button));
+function sgmPress(string $button): bool {
+    $ch = curl_init(SGM_API_URL . '/api/press?button=' . urlencode($button));
     curl_setopt_array($ch, [
         CURLOPT_POST           => true,
         CURLOPT_POSTFIELDS     => '',

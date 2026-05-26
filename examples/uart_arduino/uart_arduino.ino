@@ -1,7 +1,7 @@
 /*
  * HA-SGM-2026 — UART Client (Arduino)
  *
- * เชื่อม Arduino/ESP32 อื่นเข้า ESP32 HA-SGM-2026 ผ่าน UART
+ * เชื่อม Arduino หรืออุปกรณ์อื่นเข้า SGM HA-SGM-2026 ผ่าน UART
  * ใช้ Serial1 (หรือ SoftwareSerial) คุย กับ SGM, Serial (USB) แสดงผล
  *
  * การต่อสาย:
@@ -13,7 +13,7 @@
  */
 
 // ---------- เลือก Serial สำหรับ SGM ----------
-// Arduino Mega / ESP32 มี Serial1 ในตัว
+// Arduino Mega / Arduino Due มี Serial1 ในตัว
 #define SGM Serial1
 
 // Arduino Uno/Nano — ใช้ SoftwareSerial แทน

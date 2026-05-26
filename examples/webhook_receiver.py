@@ -1,7 +1,7 @@
 """
 HA-SGM-2026 — Simple Webhook Receiver (Python)
 
-รับ POST จาก ESP32 เมื่อ sensor เปลี่ยนสถานะ
+รับ POST จาก SGM เมื่อ sensor เปลี่ยนสถานะ
 payload: { "device": "...", "sensor": "...", "state": "ON/OFF", "ip": "..." }
 
 ติดตั้ง: pip install flask
@@ -13,7 +13,7 @@ import os, datetime
 
 app = Flask(__name__)
 
-# ใส่ token เดียวกับที่ตั้งใน ESP32 (หรือปล่อยว่างถ้าไม่ใช้ token)
+# ใส่ token เดียวกับที่ตั้งใน SGM (หรือปล่อยว่างถ้าไม่ใช้ token)
 WEBHOOK_TOKEN = os.environ.get("WEBHOOK_TOKEN", "")
 
 SENSOR_LABELS = {

@@ -1,6 +1,7 @@
 # HA-SGM-2026 — API Examples
 
-ตัวอย่างการใช้งาน **REST API · WebSocket · Webhook · UART** สำหรับ [HA-SGM-2026 Smart Gate Module](https://github.com/wanchaidiy/ha_sgm_2026_esp32)
+ตัวอย่างการใช้งาน **REST API · WebSocket · Webhook · UART** สำหรับ [HA-SGM-2026 Smart Gate Module](https://github.com/wanchaidiy/ha_sgm_2026_esp32)  
+ดู firmware ที่ repo หลัก → [ha_sgm_2026_esp32](https://github.com/wanchaidiy/ha_sgm_2026_esp32)
 
 ---
 
@@ -9,19 +10,19 @@
 | ไฟล์ | ประเภท | คำอธิบาย |
 |------|--------|---------|
 | [`examples/ws_client.html`](examples/ws_client.html) | WebSocket | Browser client — ดูสถานะ sensor แบบ real-time |
-| [`examples/webhook_receiver.py`](examples/webhook_receiver.py) | Webhook | Python server รับ POST จาก ESP32 |
+| [`examples/webhook_receiver.py`](examples/webhook_receiver.py) | Webhook | Python server รับ POST จาก SGM |
 | [`examples/api_examples.sh`](examples/api_examples.sh) | REST API | curl commands ครบทุก endpoint |
-| [`examples/uart_client.py`](examples/uart_client.py) | UART | Python client คุยกับ ESP32 ผ่าน Serial |
-| [`examples/uart_arduino/uart_arduino.ino`](examples/uart_arduino/uart_arduino.ino) | UART | Arduino/ESP32 client สำหรับต่อกันเป็น hardware |
+| [`examples/uart_client.py`](examples/uart_client.py) | UART | Python client คุยกับ SGM ผ่าน Serial |
+| [`examples/uart_arduino/uart_arduino.ino`](examples/uart_arduino/uart_arduino.ino) | UART | Arduino client สำหรับต่อกันเป็น hardware |
 | [`webhook_line.example.php`](webhook_line.example.php) | Webhook + LINE | รับ webhook แล้วส่ง LINE Notify |
 
 ---
 
-## ภาพรวม API ของ ESP32
+## ภาพรวม API ของ SGM
 
 ```
-http://<ESP32-IP>/          ← REST API  (port 80)
-ws://<ESP32-IP>:81/         ← WebSocket (port 81)
+http://<SGM-IP>/            ← REST API  (port 80)
+ws://<SGM-IP>:81/           ← WebSocket (port 81)
 UART0 (GPIO1/3) 115200      ← Serial device protocol
 ```
 
@@ -38,7 +39,7 @@ UART0 (GPIO1/3) 115200      ← Serial device protocol
 **วิธีใช้**
 
 1. เปิดไฟล์ `examples/ws_client.html` ในเบราว์เซอร์
-2. กรอก IP ของ ESP32 และ Token (ถ้าตั้งไว้)
+2. กรอก IP ของ SGM และ Token (ถ้าตั้งไว้)
 3. กด **เชื่อมต่อ** — sensor state อัพเดตอัตโนมัติทุกครั้งที่เปลี่ยน
 
 **Protocol**
@@ -74,13 +75,13 @@ wscat -c "ws://192.168.1.100:81/?token=your_token"
 
 **ไฟล์:** [`examples/webhook_receiver.py`](examples/webhook_receiver.py)
 
-รับ HTTP POST จาก ESP32 ทุกครั้งที่ sensor เปลี่ยนสถานะ
+รับ HTTP POST จาก SGM ทุกครั้งที่ sensor เปลี่ยนสถานะ
 
 **ติดตั้งและรัน**
 
 ```bash
 pip install flask
-# ตั้ง token ให้ตรงกับ ESP32 (หรือไม่ตั้งก็ได้)
+# ตั้ง token ให้ตรงกับ SGM (หรือไม่ตั้งก็ได้)
 WEBHOOK_TOKEN=your_token python examples/webhook_receiver.py
 ```
 
@@ -106,7 +107,7 @@ Endpoint: `http://your-server:5000/webhook`
 | `car_open`   | รถผ่านฝั่งเปิด |
 | `car_closed` | รถผ่านฝั่งปิด |
 
-**ตั้งค่า Webhook URL ใน ESP32**
+**ตั้งค่า Webhook URL ใน SGM**
 
 ผ่าน WiFiManager Config Portal → กรอก Webhook URL เป็น `http://your-server:5000/webhook`
 
@@ -163,7 +164,7 @@ curl -X POST "http://$IP/api/press?button=stop" -H "TOKEN: $TOKEN"
 **ไฟล์:** [`examples/uart_client.py`](examples/uart_client.py) · [`examples/uart_arduino/uart_arduino.ino`](examples/uart_arduino/uart_arduino.ino)
 
 ควบคุมและอ่านสถานะผ่าน Serial โดยตรง ไม่ต้องใช้ WiFi  
-ESP32 ใช้ **UART0 (GPIO1=TX / GPIO3=RX)** บอด **115200**
+SGM ใช้ **UART0 (GPIO1=TX / GPIO3=RX)** บอด **115200**
 
 ### โปรโตคอล
 
@@ -178,7 +179,7 @@ ESP32 ใช้ **UART0 (GPIO1=TX / GPIO3=RX)** บอด **115200**
 | `carlink_remove\n` | Carlink ลบ   → ตอบ `OK:carlink_remove` |
 | `sensor\n`         | อ่านสถานะทันที → ตอบ JSON |
 
-**ข้อมูลที่รับจาก ESP32**
+**ข้อมูลที่รับจาก SGM**
 
 ```
 READY ip=192.168.1.100          ← ส่งตอน boot
@@ -215,14 +216,14 @@ python examples/uart_client.py --port COM3 --listen
 q) ออก
 ```
 
-### Arduino / ESP32 Client
+### Arduino Client
 
 **ไฟล์:** [`examples/uart_arduino/uart_arduino.ino`](examples/uart_arduino/uart_arduino.ino)
 
 **การต่อสาย**
 
 ```
-SGM ESP32              Arduino / ESP32 อื่น
+SGM                    Arduino / MCU อื่น
 ─────────              ────────────────────
 TX  (GPIO1) ─────────► RX1
 RX  (GPIO3) ◄───────── TX1
@@ -253,22 +254,22 @@ cp webhook_line.example.php webhook_line.php
 แก้ค่าในไฟล์:
 
 ```php
-define('WEBHOOK_TOKEN',  'token จาก ESP32');
+define('WEBHOOK_TOKEN',  'token จาก SGM');
 define('LINE_TOKEN',     'LINE Channel Access Token');
 define('LINE_SECRET',    'LINE Channel Secret');
 define('LINE_GROUP_ID',  'Group ID ที่จะแจ้งเตือน');
-define('ESP32_API_URL',  'https://your-esp32-ngrok-url');
+define('SGM_API_URL',    'https://your-sgm-ngrok-url');
 ```
 
 ฟีเจอร์:
-- ESP32 ส่ง webhook → PHP ส่งข้อความเข้ากลุ่ม LINE
-- พิมพ์ "เปิดประตู" ในกลุ่ม LINE → PHP สั่ง ESP32 เปิดประตู
+- SGM ส่ง webhook → PHP ส่งข้อความเข้ากลุ่ม LINE
+- พิมพ์ "เปิดประตู" ในกลุ่ม LINE → PHP สั่ง SGM เปิดประตู
 
 ---
 
 ## การได้ Token
 
-Token สร้างจาก `SHA256(secret + MAC address)` ของ ESP32
+Token สร้างจาก `SHA256(secret + MAC address)` ของ SGM
 
 ```bash
 # วิธีที่ 1: ผ่าน API
@@ -282,7 +283,7 @@ curl "http://192.168.1.100/api/token?secret=your_secret"
 
 ## Firmware
 
-ดู firmware ของ ESP32 ได้ที่ → [ha_sgm_2026_esp32](https://github.com/wanchaidiy/ha_sgm_2026_esp32)
+ดู firmware ของ SGM ได้ที่ → [SGM firmware repo](https://github.com/wanchaidiy/ha_sgm_2026_esp32)
 
 ---
 

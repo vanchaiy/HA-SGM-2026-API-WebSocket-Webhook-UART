@@ -1,12 +1,12 @@
 """
 HA-SGM-2026 — UART Client (Python)
 
-สื่อสารกับ ESP32 ผ่าน Serial (UART0) บอด 115200
+สื่อสารกับ SGM ผ่าน Serial (UART0) บอด 115200
 
 โปรโตคอล:
   ส่ง : open | close | stop | carlink_add | carlink_remove | sensor  (+ newline)
   รับ : OK:<cmd> | ERR:unknown:<cmd> | JSON sensor state
-  Auto: ESP32 ส่ง JSON ทุกครั้งที่ sensor เปลี่ยน (ไม่ต้องถาม)
+  Auto: SGM ส่ง JSON ทุกครั้งที่ sensor เปลี่ยน (ไม่ต้องถาม)
 
 ติดตั้ง: pip install pyserial
 รัน    : python uart_client.py
