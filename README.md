@@ -290,7 +290,7 @@ curl "http://192.168.1.100/api/token?secret=your_secret"
 
 ## Related
 
-- [HA Gate Control Card](https://github.com/vanchaiy/HA-SGM-2026-API-Examples) — Lovelace card for Home Assistant 
+- [HA Gate Control Card](https://github.com/vanchaiy/HA-Gate-Control-Card) — Lovelace card for Home Assistant 
 - [Home Assistant](https://www.home-assistant.io/) — open source home automation
 - [LINE Messaging API](https://developers.line.biz/en/docs/messaging-api/) — LINE bot integration
 
