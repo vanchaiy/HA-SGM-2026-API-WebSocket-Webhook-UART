@@ -1,7 +1,6 @@
 # HA-SGM-2026 — API Examples
 
-ตัวอย่างการใช้งาน **REST API · WebSocket · Webhook · UART** สำหรับ [HA-SGM-2026 Smart Gate Module](https://github.com/wanchaidiy/ha_sgm_2026_esp32)  
-ดู firmware ที่ repo หลัก → [ha_sgm_2026_esp32](https://github.com/wanchaidiy/ha_sgm_2026_esp32)
+ตัวอย่างการใช้งาน **REST API · WebSocket · Webhook · UART** สำหรับ HA-SGM-2026 Smart Gate Module
 
 ---
 
@@ -14,7 +13,7 @@
 | [`examples/api_examples.sh`](examples/api_examples.sh) | REST API | curl commands ครบทุก endpoint |
 | [`examples/uart_client.py`](examples/uart_client.py) | UART | Python client คุยกับ SGM ผ่าน Serial |
 | [`examples/uart_arduino/uart_arduino.ino`](examples/uart_arduino/uart_arduino.ino) | UART | Arduino client สำหรับต่อกันเป็น hardware |
-| [`webhook_line.example.php`](webhook_line.example.php) | Webhook + LINE | รับ webhook แล้วส่ง LINE Notify |
+| [`examples/webhook_line.example.php`](examples/webhook_line.example.php) | Webhook + LINE | รับ webhook แล้วส่ง LINE Notify |
 
 ---
 
