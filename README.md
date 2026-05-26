@@ -33,7 +33,7 @@ UART0 (GPIO1/3) 115200      ← Serial device protocol
 
 เปิดไฟล์ในเบราว์เซอร์โดยตรง ไม่ต้องติดตั้งอะไร
 
-![ws_client screenshot](https://raw.githubusercontent.com/wanchaidiy/ha-sgm-2026-examples/main/docs/ws_screenshot.png)
+![ws_client screenshot](screenshot/ws_client.png)
 
 **วิธีใช้**
 
