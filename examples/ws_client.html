@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HA-SGM-2026 WebSocket Client</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 24px; }
+  h1 { font-size: 1.4rem; color: #38bdf8; margin-bottom: 20px; }
+  .card { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px; }
+  input { width: 100%; padding: 8px 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+          color: #e2e8f0; font-size: 0.9rem; outline: none; }
+  input:focus { border-color: #38bdf8; }
+  .row { display: flex; gap: 10px; margin-top: 14px; }
+  button { flex: 1; padding: 9px; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600; transition: opacity .2s; }
+  button:hover { opacity: .85; }
+  #btnConnect { background: #0ea5e9; color: #fff; }
+  #btnDisconnect { background: #ef4444; color: #fff; }
+  #btnDisconnect:disabled, #btnConnect:disabled { opacity: .4; cursor: not-allowed; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+  .badge.on  { background: #16a34a; color: #fff; }
+  .badge.off { background: #374151; color: #9ca3af; }
+  .badge.connecting { background: #d97706; color: #fff; }
+  #status { font-size: 0.85rem; color: #94a3b8; margin-top: 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .sensor-box { background: #0f172a; border-radius: 10px; padding: 14px; text-align: center; border: 1px solid #1e293b; }
+  .sensor-box .name { font-size: 0.75rem; color: #64748b; margin-bottom: 6px; }
+  .log { background: #0f172a; border-radius: 8px; padding: 12px; max-height: 200px; overflow-y: auto;
+         font-size: 0.78rem; font-family: monospace; color: #4ade80; }
+  .log .ts { color: #475569; }
+</style>
+</head>
+<body>
+
+<h1>HA-SGM-2026 — WebSocket Live Sensor</h1>
+
+<!-- Connection Setup -->
+<div class="card">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <label>ESP32 IP Address</label>
+      <input id="ipInput" value="192.168.1.100" placeholder="192.168.1.x">
+    </div>
+    <div>
+      <label>API Token (ถ้าตั้งไว้)</label>
+      <input id="tokenInput" type="password" placeholder="เว้นว่างถ้าไม่มี token">
+    </div>
+  </div>
+  <div class="row">
+    <button id="btnConnect"    onclick="connect()">เชื่อมต่อ</button>
+    <button id="btnDisconnect" onclick="disconnect()" disabled>ตัดการเชื่อมต่อ</button>
+  </div>
+  <div id="status">สถานะ: ยังไม่ได้เชื่อมต่อ</div>
+</div>
+
+<!-- Sensor Grid -->
+<div class="card">
+  <label style="margin-bottom:12px">Sensor State (อัพเดตอัตโนมัติ)</label>
+  <div class="grid">
+    <div class="sensor-box"><div class="name">open</div>    <span class="badge off" id="s_open">OFF</span></div>
+    <div class="sensor-box"><div class="name">closed</div>  <span class="badge off" id="s_closed">OFF</span></div>
+    <div class="sensor-box"><div class="name">opening</div> <span class="badge off" id="s_opening">OFF</span></div>
+    <div class="sensor-box"><div class="name">closing</div> <span class="badge off" id="s_closing">OFF</span></div>
+    <div class="sensor-box"><div class="name">car_open</div>   <span class="badge off" id="s_car_open">OFF</span></div>
+    <div class="sensor-box"><div class="name">car_closed</div> <span class="badge off" id="s_car_closed">OFF</span></div>
+  </div>
+</div>
+
+<!-- Event Log -->
+<div class="card">
+  <label style="margin-bottom:8px">Event Log</label>
+  <div class="log" id="log"></div>
+</div>
+
+<script>
+let ws = null;
+
+const SENSORS = ['open','closed','opening','closing','car_open','car_closed'];
+
+function connect() {
+  const ip    = document.getElementById('ipInput').value.trim();
+  const token = document.getElementById('tokenInput').value.trim();
+  if (!ip) { alert('กรุณากรอก IP'); return; }
+
+  const url = token ? `ws://${ip}:81/?token=${token}` : `ws://${ip}:81/`;
+  setStatus(`กำลังเชื่อมต่อ ${url}…`, 'connecting');
+  addLog(`Connecting → ${url}`);
+
+  ws = new WebSocket(url);
+
+  ws.onopen = () => {
+    setStatus(`เชื่อมต่อสำเร็จ ws://${ip}:81`, 'on');
+    addLog('✅ Connected');
+    document.getElementById('btnConnect').disabled    = true;
+    document.getElementById('btnDisconnect').disabled = false;
+  };
+
+  ws.onmessage = (e) => {
+    try {
+      const d = JSON.parse(e.data);
+      addLog(`📨 ${e.data}`);
+      SENSORS.forEach(k => {
+        const el = document.getElementById('s_' + k);
+        if (!el || d[k] === undefined) return;
+        const on = d[k] === true || d[k] === 'ON';
+        el.textContent = on ? 'ON' : 'OFF';
+        el.className   = 'badge ' + (on ? 'on' : 'off');
+      });
+    } catch { addLog(`⚠️ ${e.data}`); }
+  };
+
+  ws.onerror  = () => { addLog('❌ WebSocket error'); };
+
+  ws.onclose  = (e) => {
+    setStatus(`ตัดการเชื่อมต่อแล้ว (code ${e.code})`, '');
+    addLog(`🔌 Disconnected (code ${e.code})`);
+    document.getElementById('btnConnect').disabled    = false;
+    document.getElementById('btnDisconnect').disabled = true;
+    ws = null;
+  };
+}
+
+function disconnect() {
+  if (ws) ws.close();
+}
+
+function setStatus(msg, cls) {
+  const el = document.getElementById('status');
+  const badge = cls ? `<span class="badge ${cls}">${cls.toUpperCase()}</span> ` : '';
+  el.innerHTML = `สถานะ: ${badge}${msg}`;
+}
+
+function addLog(msg) {
+  const el  = document.getElementById('log');
+  const ts  = new Date().toLocaleTimeString('th-TH');
+  el.innerHTML += `<div><span class="ts">[${ts}]</span> ${msg}</div>`;
+  el.scrollTop  = el.scrollHeight;
+}
+</script>
+</body>
+</html>
