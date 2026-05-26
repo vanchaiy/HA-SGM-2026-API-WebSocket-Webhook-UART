@@ -1,6 +1,14 @@
 # HA-SGM-2026 — API Examples
 
-ตัวอย่างการใช้งาน **REST API · WebSocket · Webhook · UART** สำหรับ HA-SGM-2026 Smart Gate Module
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-ESP32-red.svg)](https://www.espressif.com/)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-compatible-41BDF5?logo=homeassistant)](https://www.home-assistant.io/)
+[![Protocol](https://img.shields.io/badge/Protocol-WebSocket%20%7C%20Webhook%20%7C%20UART-green.svg)]()
+
+ตัวอย่างการใช้งาน **REST API · WebSocket · Webhook · UART** สำหรับ **HA-SGM-2026 Smart Gate Module**  
+ระบบควบคุมประตูอัตโนมัติ ESP32 — เชื่อมต่อ Home Assistant ผ่าน MQTT พร้อม API ครบรูปแบบ
+
+> **Keywords:** ESP32 gate controller · WebSocket real-time sensor · Webhook LINE notify · UART serial protocol · Home Assistant MQTT · smart gate IoT · ประตูอัตโนมัติ
 
 ---
 
@@ -280,12 +288,18 @@ curl "http://192.168.1.100/api/token?secret=your_secret"
 
 ---
 
-## Firmware
+## Related
 
-ดู firmware ของ SGM ได้ที่ → [SGM firmware repo](https://github.com/wanchaidiy/ha_sgm_2026_esp32)
+- [SGM firmware repo](https://github.com/wanchaidiy/ha_sgm_2026_esp32) — ESP32 firmware source code
+- [Home Assistant](https://www.home-assistant.io/) — open source home automation
+- [LINE Messaging API](https://developers.line.biz/en/docs/messaging-api/) — LINE bot integration
 
 ---
 
 ## License
 
 MIT
+
+---
+
+*HA-SGM-2026 · ESP32 Smart Gate · WebSocket · Webhook · UART · Home Assistant · MQTT · LINE Notify · IoT · ประตูอัตโนมัติ*
