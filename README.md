@@ -280,12 +280,6 @@ curl "http://192.168.1.100/api/token?secret=your_secret"
 
 ---
 
-## Firmware
-
-ดู firmware ของ SGM ได้ที่ → [SGM firmware repo](https://github.com/wanchaidiy/ha_sgm_2026_esp32)
-
----
-
 ## License
 
 MIT
